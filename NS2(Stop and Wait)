@@ -1,0 +1,69 @@
+# Create a new simulator object
+set ns [new Simulator]
+
+# Set color for visualization (optional)
+$ns color 1 Blue
+
+# Open the nam output file for visualization
+set nf [open out.nam w]
+$ns namtrace-all $nf
+
+# Destructor to clean up after simulation ends
+proc finish {} {
+    global ns nf
+    $ns flush-trace
+    close $nf
+    exec nam out.nam &  ;# Open the nam visualization tool after simulation
+    exit 0
+}
+
+# Create two nodes and set labels for them
+set n0 [$ns node]
+set n1 [$ns node]
+$ns at 0.0 "$n0 label \" Sender\" " ;# Label node 0 as "Sender"
+$ns at 0.0 "$n1 label \"Receiver\" " ;# Label node 1 as "Receiver"
+
+# Set up a duplex link between the nodes
+$ns duplex-link $n0 $n1 1Mb 200ms DropTail
+$ns duplex-link-op $n0 $n1 orient right ;# Set the orientation of the link
+
+# Create a TCP agent and attach it to the sender node
+set tcp [new Agent/TCP]
+$ns attach-agent $n0 $tcp
+$tcp set fid_ 1 ;# Set flow ID
+$tcp set window_ 1 ;# Set window size
+$tcp set maxcwnd_ 1 ;# Set maximum congestion window size
+
+# Add trace for TCP agent
+$ns add-agent-trace $tcp tcp
+$ns monitor-agent-trace $tcp
+
+# Create a TCP sink agent and attach it to the receiver node
+set tcpsink [new Agent/TCPSink]
+$ns attach-agent $n1 $tcpsink
+$ns connect $tcp $tcpsink
+
+# Create an FTP application and attach it to the TCP agent
+set ftp [new Application/FTP]
+$ftp attach-agent $tcp
+
+# Start the FTP application at time 0.5 seconds
+$ns at 0.5 "$ftp start"
+
+# Detach agents after a certain time
+$ns at 3.0 "$ns detach-agent $n0 $tcp ; $ns detach-agent $n1 $tcpsink"
+
+# Annotate trace events
+$ns at 1.0 "$ns trace-annotate \"send packet 1\""
+$ns at 1.4 "$ns trace-annotate \"receive ack 1\""
+$ns at 2.0 "$ns trace-annotate \"send packet 2\""
+$ns at 2.5 "$ns trace-annotate \"receive ack 2\""
+$ns at 3.2 "$ns trace-annotate \"send packet 3\""
+$ns at 3.5 "$ns trace-annotate \"receive ack 3\""
+$ns at 3.8 "$ns trace-annotate \"send packet 4\""
+
+# Schedule the finish procedure to be executed at the end of simulation
+$ns at 4.0 "finish"
+
+# Run the simulation
+$ns run
