@@ -37,32 +37,24 @@ public class RSA {
         this.N = N;
     }
 
-    public static void main(String[] args) throws IOException {        RSA rsa = new RSA(); // Create an instance of the RSA class
-
+    public static void main(String[] args) throws IOException {        
+        RSA rsa = new RSA(); // Create an instance of the RSA class
         // Input stream to read user input
         DataInputStream in = new DataInputStream(System.in);
-
         String testString; // Variable to store user input
-
         // Prompt the user to enter plain text
         System.out.println("Enter the plain text:");
         testString = in.readLine(); // Read user input
-
         // Print the text before encryption
         System.out.println("Encrypting string: " + testString);
-
         // Print the string in bytes
         System.out.println("String in bytes: " + bytesToString(testString.getBytes()));
-
         // Encrypt the plain text using RSA encryption
         byte[] encrypted = rsa.encrypt(testString.getBytes());
-
         // Decrypt the encrypted text
         byte[] decrypted = rsa.decrypt(encrypted);
-
         // Print decrypted bytes
         System.out.println("Decrypting Bytes: " + bytesToString(decrypted));
-
         // Print the decrypted string
         System.out.println("Decrypted string: " + new String(decrypted));
     }
