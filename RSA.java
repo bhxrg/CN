@@ -62,12 +62,12 @@ public class RSA {
 
     // Convert byte array to string
     private static String bytesToString(byte[] encrypted) {
-        StringBuilder test = new StringBuilder();
-        for (byte b : encrypted) {
-            test.append(Byte.toString(b));
-        }
-        return test.toString();
+    StringBuilder test = new StringBuilder(); // StringBuilder to construct the string representation
+    for (byte b : encrypted) { // Iterate over each byte in the byte array
+        test.append(Byte.toString(b)); // Convert the byte to a string and append it to the StringBuilder
     }
+    return test.toString(); // Return the string representation of the byte array
+}
 
     // Encryption method
     public byte[] encrypt(byte[] message) {
