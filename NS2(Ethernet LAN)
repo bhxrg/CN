@@ -1,3 +1,4 @@
+TCL File:
 # Create a new simulator object
 set ns [new Simulator]
 
@@ -98,3 +99,14 @@ $ns at 16 "finish"
 
 # Run the simulation
 $ns run
+
+AWK File:
+BEGIN{ 
+} 
+{ 
+ if ($6=="cwnd_") 
+ printf("%f\t%f\t\n",$1,$7);
+} 
+END{ 
+} 
+
